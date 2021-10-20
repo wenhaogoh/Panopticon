@@ -13,10 +13,12 @@ const OptionsWrapper = styled.div`
 
 const Questions = (props) => {
   const [displayIntro, setDisplayIntro] = useState(true);
+  const [displayWarning, setDisplayWarning] = useState(false);
+  const [displayEnding, setDisplayEnding] = useState(false);
 
   const [activateCard, setActivateCard] = useState(true);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [displayWarning, setDisplayWarning] = useState(false);
+
   const [warningCount, setWarningCount] = useState(0);
   const bleeps = useBleeps();
 
@@ -55,19 +57,20 @@ const Questions = (props) => {
     callFuncs(0, funcs);
   };
 
+  const onRestartHandler = () => {
+    const funcs = [
+      [() => setActivateCard(false), 0],
+      [() => reset(), 500],
+      [() => setActivateCard(true), 500],
+    ];
+    callFuncs(0, funcs);
+  };
+
   const onAcknowledgeWarningHandler = () => {
     bleeps.tap.play();
     props.warningHandler(false);
     if (warningCount >= 3) {
-      const funcs = [
-        [() => setActivateCard(false), 0],
-        [() => setDisplayWarning(false), 500],
-        [() => setQuestionIndex(0), 0],
-        [() => setDisplayIntro(true), 0],
-        [() => setWarningCount(0), 0],
-        [() => setActivateCard(true), 500],
-      ];
-      callFuncs(0, funcs);
+      onRestartHandler();
       return;
     }
     const funcs = [
@@ -80,7 +83,19 @@ const Questions = (props) => {
   };
 
   const setNextQuestion = () => {
-    setQuestionIndex(questionIndex + 1);
+    if (questionIndex === questions.length - 1) {
+      setDisplayEnding(true);
+    } else {
+      setQuestionIndex(questionIndex + 1);
+    }
+  };
+
+  const reset = () => {
+    setQuestionIndex(0);
+    setDisplayWarning(false);
+    setDisplayEnding(false);
+    setDisplayIntro(true);
+    setWarningCount(0);
   };
 
   const generateWarningMessage = (warningCount) => {
@@ -104,7 +119,15 @@ const Questions = (props) => {
 
   return (
     <Card
-      title={displayIntro ? intro.title : !displayWarning && question.title}
+      title={
+        displayIntro
+          ? intro.title
+          : displayWarning
+          ? ""
+          : displayEnding
+          ? "Well done citizen."
+          : question.title
+      }
       image={!displayIntro && !displayWarning && question.image}
       options={
         displayIntro ? (
@@ -121,6 +144,15 @@ const Questions = (props) => {
                 onClick={() => onAcknowledgeWarningHandler()}
               >
                 <Text>{warningCount >= 3 ? "Restart" : "I understand"}</Text>
+              </Button>
+            ) : displayEnding ? (
+              <Button
+                active
+                FrameComponent={FrameCorners}
+                palette="primary"
+                onClick={() => onRestartHandler()}
+              >
+                <Text>{"Restart"}</Text>
               </Button>
             ) : (
               question.options.map((option) => (

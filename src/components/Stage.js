@@ -64,7 +64,6 @@ const Stage = () => {
         </FrameLines>
       )}
       {displayLoading && <LoadingBars animator={{ activate: isLoading }} />}
-
       {displayQuestion && <Questions warningHandler={warningHandler} />}
     </>
   );

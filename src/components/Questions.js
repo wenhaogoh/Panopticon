@@ -3,6 +3,7 @@ import { Button, Card, FrameCorners, Text } from "@arwes/core";
 import { useBleeps } from "@arwes/sounds";
 import styled from "styled-components";
 import { callFuncs } from "../utils/callFuncs";
+import { intro, questions } from "../consts/content";
 
 const OptionsWrapper = styled.div`
   display: flex;
@@ -11,51 +12,140 @@ const OptionsWrapper = styled.div`
 `;
 
 const Questions = (props) => {
-  const [activateQuestion, setActivateQuestion] = useState(true);
+  const [displayIntro, setDisplayIntro] = useState(true);
+
+  const [activateCard, setActivateCard] = useState(true);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [displayWarning, setDisplayWarning] = useState(false);
+  const [warningCount, setWarningCount] = useState(0);
   const bleeps = useBleeps();
-  const onOptionClickHandler = () => {
+
+  const question = questions[questionIndex];
+
+  const onStartClickHandler = () => {
     const funcs = [
-      [() => setActivateQuestion(false), 0],
-      [() => setActivateQuestion(true), 1000],
+      [() => setActivateCard(false), 0],
+      [() => setDisplayIntro(false), 500],
+      [() => setActivateCard(true), 500],
     ];
     bleeps.tap.play();
     callFuncs(0, funcs);
-    props.warningHandler();
+  };
+
+  const onOptionClickHandler = (option) => {
+    bleeps.tap.play();
+    if (option.warning) {
+      setWarningCount(warningCount + 1);
+      props.warningHandler(true);
+      const funcs = [
+        [() => setActivateCard(false), 0],
+        [() => setDisplayWarning(true), 500],
+        [() => setActivateCard(true), 500],
+      ];
+      callFuncs(0, funcs);
+      return;
+    }
+
+    const funcs = [
+      [() => setActivateCard(false), 0],
+      [() => setNextQuestion(), 500],
+      [() => setActivateCard(true), 500],
+    ];
+
+    callFuncs(0, funcs);
+  };
+
+  const onAcknowledgeWarningHandler = () => {
+    bleeps.tap.play();
+    props.warningHandler(false);
+    if (warningCount >= 3) {
+      const funcs = [
+        [() => setActivateCard(false), 0],
+        [() => setDisplayWarning(false), 500],
+        [() => setQuestionIndex(0), 0],
+        [() => setDisplayIntro(true), 0],
+        [() => setWarningCount(0), 0],
+        [() => setActivateCard(true), 500],
+      ];
+      callFuncs(0, funcs);
+      return;
+    }
+    const funcs = [
+      [() => setActivateCard(false), 0],
+      [() => setDisplayWarning(false), 500],
+      [() => setNextQuestion(), 0],
+      [() => setActivateCard(true), 500],
+    ];
+    callFuncs(0, funcs);
+  };
+
+  const setNextQuestion = () => {
+    setQuestionIndex(questionIndex + 1);
+  };
+
+  const generateWarningMessage = (warningCount) => {
+    let message;
+    switch (warningCount) {
+      case 1:
+        message = "This is your first warning.";
+        break;
+      case 2:
+        message = "This is your second and final warning";
+        break;
+      case 3:
+        message = "Say goodbye.";
+        break;
+      default:
+        message = "Something went wrong!.";
+        break;
+    }
+    return message;
   };
 
   return (
     <Card
+      title={displayIntro ? intro.title : !displayWarning && question.title}
+      image={!displayIntro && !displayWarning && question.image}
       options={
-        <OptionsWrapper>
-          <Button
-            active
-            FrameComponent={FrameCorners}
-            palette="primary"
-            onClick={onOptionClickHandler}
-          >
-            <Text>Option A</Text>
+        displayIntro ? (
+          <Button palette="success" onClick={onStartClickHandler} active>
+            <Text>Start</Text>
           </Button>
-          <Button
-            active
-            FrameComponent={FrameCorners}
-            palette="primary"
-            onClick={onOptionClickHandler}
-          >
-            <Text>Option B</Text>
-          </Button>
-        </OptionsWrapper>
+        ) : (
+          <OptionsWrapper>
+            {displayWarning ? (
+              <Button
+                active
+                FrameComponent={FrameCorners}
+                palette="primary"
+                onClick={() => onAcknowledgeWarningHandler()}
+              >
+                <Text>{warningCount >= 3 ? "Restart" : "I understand"}</Text>
+              </Button>
+            ) : (
+              question.options.map((option) => (
+                <Button
+                  active
+                  FrameComponent={FrameCorners}
+                  palette="primary"
+                  onClick={() => onOptionClickHandler(option)}
+                >
+                  <Text>{option.text}</Text>
+                </Button>
+              ))
+            )}
+          </OptionsWrapper>
+        )
       }
-      animator={{ activate: activateQuestion }}
+      animator={{ activate: activateCard }}
       style={{ maxWidth: 500 }}
     >
       <Text>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi pretium
-        ut eros et sagittis. Donec rutrum maximus nulla, in vehicula lacus
-        aliquam nec. Pellentesque a dolor non lacus vestibulum malesuada. Ut
-        suscipit eu dolor a interdum. Etiam id velit facilisis, convallis dolor
-        at, cursus dolor. Morbi in dui tellus. Praesent ullamcorper tortor et
-        est tristique, non pretium metus pellentesque. Vestibulum sit amet ipsum
-        porttitor, tempus est sed, gravida nisi.
+        {displayIntro
+          ? intro.text
+          : displayWarning
+          ? generateWarningMessage(warningCount)
+          : question.text}
       </Text>
     </Card>
   );

@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  FrameBox,
-  FrameLines,
-  LoadingBars,
-  Text,
-} from "@arwes/core";
+import { Button, FrameBox, FrameLines, LoadingBars, Text } from "@arwes/core";
 import { useBleeps } from "@arwes/sounds";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -26,9 +19,6 @@ const Stage = () => {
   const [displayLoading, setDisplayLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [displayIntro, setDisplayIntro] = useState(false);
-  const [activateIntro, setActivateIntro] = useState(false);
-
   const [displayBackground, setDisplayBackground] = useState(false);
   const [displayQuestion, setDisplayQuestion] = useState(false);
 
@@ -45,26 +35,15 @@ const Stage = () => {
       [() => setIsLoading(false), 3000],
       [() => setDisplayLoading(false), 500],
       [() => bleeps.bgm.play(), 0],
-      [() => setDisplayIntro(true), 0],
       [() => setDisplayBackground(true), 0],
-      [() => setActivateIntro(true), 0],
-    ];
-    bleeps.tap.play();
-    callFuncs(0, funcs);
-  };
-
-  const onStartClickHandler = () => {
-    const funcs = [
-      [() => setActivateIntro(false), 0],
-      [() => setDisplayIntro(false), 500],
       [() => setDisplayQuestion(true), 0],
     ];
     bleeps.tap.play();
     callFuncs(0, funcs);
   };
 
-  const warningHandler = () => {
-    setWarning(!warning);
+  const warningHandler = (bool) => {
+    setWarning(bool);
   };
 
   return (
@@ -85,31 +64,6 @@ const Stage = () => {
         </FrameLines>
       )}
       {displayLoading && <LoadingBars animator={{ activate: isLoading }} />}
-      {displayIntro && (
-        <>
-          <Card
-            title="Panapticon"
-            options={
-              <Button palette="success" onClick={onStartClickHandler} active>
-                <Text>Start</Text>
-              </Button>
-            }
-            animator={{ activate: activateIntro }}
-            style={{ maxWidth: 500 }}
-          >
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-              pretium ut eros et sagittis. Donec rutrum maximus nulla, in
-              vehicula lacus aliquam nec. Pellentesque a dolor non lacus
-              vestibulum malesuada. Ut suscipit eu dolor a interdum. Etiam id
-              velit facilisis, convallis dolor at, cursus dolor. Morbi in dui
-              tellus. Praesent ullamcorper tortor et est tristique, non pretium
-              metus pellentesque. Vestibulum sit amet ipsum porttitor, tempus
-              est sed, gravida nisi.
-            </Text>
-          </Card>
-        </>
-      )}
 
       {displayQuestion && <Questions warningHandler={warningHandler} />}
     </>

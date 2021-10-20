@@ -58,6 +58,7 @@ const Questions = (props) => {
   };
 
   const onRestartHandler = () => {
+    bleeps.tap.play();
     const funcs = [
       [() => setActivateCard(false), 0],
       [() => reset(), 500],
@@ -70,7 +71,12 @@ const Questions = (props) => {
     bleeps.tap.play();
     props.warningHandler(false);
     if (warningCount >= 3) {
-      onRestartHandler();
+      const funcs = [
+        [() => setActivateCard(false), 0],
+        [() => reset(), 500],
+        [() => setActivateCard(true), 500],
+      ];
+      callFuncs(0, funcs);
       return;
     }
     const funcs = [

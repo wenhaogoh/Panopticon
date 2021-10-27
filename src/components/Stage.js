@@ -1,6 +1,6 @@
 import { Button, FrameBox, FrameLines, LoadingBars, Text } from "@arwes/core";
 import { useBleeps } from "@arwes/sounds";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { callFuncs } from "../utils/callFuncs";
 import Background from "./Background";
@@ -25,6 +25,12 @@ const Stage = () => {
   const [warning, setWarning] = useState(false);
 
   const bleeps = useBleeps();
+
+  useEffect(() => {
+    return () => {
+      bleeps.bgm.stop();
+    };
+  }, [bleeps]);
 
   const onDisclaimerClickHandler = () => {
     const funcs = [

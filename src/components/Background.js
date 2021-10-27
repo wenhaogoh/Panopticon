@@ -36,7 +36,13 @@ const Background = (props) => {
 
   for (let i = 0; i * 100 <= windowDimensions.height - 50; i++) {
     for (let j = 0; j * 100 <= windowDimensions.width - 50; j++) {
-      if (j === 0 || (j + 1) * 100 > windowDimensions.width - 50) {
+      if (
+        (j === 1 && i > 0 && (i + 1) * 100 < windowDimensions.height - 50) ||
+        ((j + 2) * 100 > windowDimensions.width - 50 &&
+          (j + 1) * 100 < windowDimensions.width - 50 &&
+          i > 0 &&
+          (i + 1) * 100 < windowDimensions.height - 50)
+      ) {
         eyes.push(
           <Eye
             id={nanoid(4)}
@@ -50,10 +56,11 @@ const Background = (props) => {
           />
         );
       } else if (
-        i === 0 ||
-        ((i + 1) * 100 > windowDimensions.height - 50 &&
+        (i === 1 && j > 0 && (j + 2) * 100 < windowDimensions.width - 50) ||
+        ((i + 2) * 100 > windowDimensions.height - 50 &&
+          (i + 1) * 100 < windowDimensions.height - 50 &&
           j > 0 &&
-          (j + 1) * 100 < windowDimensions.width - 50)
+          (j + 2) * 100 < windowDimensions.width - 50)
       ) {
         eyes.push(
           <Eye

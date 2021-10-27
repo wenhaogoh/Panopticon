@@ -7,7 +7,7 @@ import {
 import styled from "styled-components";
 import About from "./pages/About";
 import Game from "./pages/Game";
-import Landing from "./pages/Landing";
+import Navbar from "./components/Navbar";
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,10 +19,10 @@ function App() {
   return (
     <Wrapper>
       <Router>
+        <Navbar />
         <Switch>
-          <Route exact path="/" component={Landing} />
+          <Route exact path="/" component={Game} />
           <Route exact path="/about" component={About} />
-          <Route exact path="/game" component={Game} />
           <Redirect to="/" />
         </Switch>
       </Router>

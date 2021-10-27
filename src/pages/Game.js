@@ -10,6 +10,7 @@ const SOUND_CLICK_URL = "/assets/sounds/click.mp3";
 const SOUND_ASSEMBLE_URL = "/assets/sounds/assemble.mp3";
 const SOUND_TYPE_URL = "/assets/sounds/type.mp3";
 const SOUND_BGM_URL = "/assets/sounds/bgm.mp3";
+const SOUND_WARNING_URL = "/assets/sounds/warning.mp3";
 
 const audioSettings = {
   common: {
@@ -28,6 +29,9 @@ const playersSettings = {
     src: [SOUND_BGM_URL],
     loop: true,
   },
+  warning: {
+    src: [SOUND_WARNING_URL],
+  },
 };
 const bleepsSettings = {
   tap: {
@@ -36,6 +40,9 @@ const bleepsSettings = {
   type: { player: "type" },
   bgm: {
     player: "bgm",
+  },
+  warning: {
+    player: "warning",
   },
 };
 

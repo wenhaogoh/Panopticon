@@ -33,7 +33,7 @@ const About = () => {
   return (
     <Wrapper>
       <StyledCard title="Summary" animator={{ animate: false }}>
-        <Text>
+        <StyledText>
           Panopticon is a simulation that explores the mechanisms of
           disciplinary power and the effects they have on individuals in the age
           of digital surveillance. It simulates a day in the life of a citizen
@@ -46,7 +46,8 @@ const About = () => {
           warnings, you will be arrested and thereby losing the “game”. Your
           goal is to make it through the day by receiving as little warnings as
           possible.
-        </Text>
+        </StyledText>
+        <Text>Sound Credits: Papers, Please</Text>
       </StyledCard>
       <StyledCard
         animator={{ animate: false }}

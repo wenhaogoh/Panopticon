@@ -56,6 +56,7 @@ const Questions = (props) => {
     }
 
     if (option.warningMessage) {
+      bleeps.warning.play();
       setWarningMessage(option.warningMessage);
       setWarningCount(warningCount + 1);
       props.warningHandler(true);
